@@ -2,10 +2,13 @@ package com.writerHub.practice.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.writerHub.practice.Util.JWTUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -18,6 +21,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -30,21 +36,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User)authentication.getPrincipal();
-        Algorithm algorithm  = Algorithm.HMAC512("TestToken".getBytes(StandardCharsets.UTF_8));
-        String access_token = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 60*60*1000 ))
-                .withIssuer(request.getRequestURL().toString())
-                .sign(algorithm);
-        String refresh_token = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 600*60*1000 ))
-                .withIssuer(request.getRequestURL().toString())
-                .sign(algorithm);
-
+        String access_token = JWTUtil.getToken(user.getUsername(),request.getServletPath().toString(),String.valueOf(user.getAuthorities().toArray()[0]));
+        String refresh_token = JWTUtil.getToken(user.getUsername(),request.getServletPath().toString(),null);
         Map<String,String> responseBody = new HashMap<>();
-        response.setHeader("access_token",access_token);
-        response.setHeader("refresh_token",refresh_token);
+        responseBody.put("access_token",access_token);
+        responseBody.put("refresh_token",refresh_token);
+        response.setContentType(APPLICATION_JSON_VALUE);
+        new ObjectMapper().writeValue(response.getOutputStream(),responseBody);
     }
 
     @Override

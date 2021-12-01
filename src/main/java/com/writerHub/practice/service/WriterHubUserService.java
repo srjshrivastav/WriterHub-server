@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.io.Writer;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLNonTransientConnectionException;
@@ -51,6 +52,11 @@ public class WriterHubUserService implements UserDetailsService {
             error.setStatusCode(HttpStatus.BAD_REQUEST);
             return ResponseEntity.badRequest().body(error);
         }
+    }
+
+    public WriterHubUser getUser(String username){
+        WriterHubUser user = userRepository.findByUsername(username);
+        return  user;
     }
 
 }

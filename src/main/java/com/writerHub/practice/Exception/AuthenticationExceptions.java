@@ -14,4 +14,11 @@ public class AuthenticationExceptions {
             this.message = message;
         }
     }
+
+    public static class AuthorizationHeaderMissing extends Exception{
+        private String message;
+        public AuthorizationHeaderMissing(String message){
+            this.message = message;
+        }
+    }
 }

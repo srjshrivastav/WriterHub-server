@@ -2,10 +2,7 @@ package com.writerHub.practice.models;
 
 import com.sun.istack.NotNull;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 public class Company {
@@ -18,7 +15,7 @@ public class Company {
     @NotNull
     private String address;
 
-    @NotNull @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY,optional = false)
     private WriterHubUser user;
 
     public Company(){}

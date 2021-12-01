@@ -24,4 +24,11 @@ public class AuthenticationExceptionHandler {
         error.setMessage(ex.getMessage());
         return  new ResponseEntity<>(error,error.getStatusCode());
     }
+
+    public ResponseEntity<AuthenticationError> handler(AuthorizationHeaderMissing ex){
+        AuthenticationError error = new AuthenticationError();
+        error.setStatusCode(HttpStatus.UNAUTHORIZED);
+        error.setMessage(ex.getMessage());
+        return  new ResponseEntity<>(error,error.getStatusCode());
+    }
 }
