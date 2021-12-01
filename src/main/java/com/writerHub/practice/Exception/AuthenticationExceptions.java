@@ -7,4 +7,11 @@ public class AuthenticationExceptions {
             this.message = message;
         }
     }
+
+    public static class AuthorExists extends Exception{
+        private String message;
+        public AuthorExists(String message){
+            this.message = message;
+        }
+    }
 }

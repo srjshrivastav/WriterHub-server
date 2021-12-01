@@ -1,33 +1,32 @@
 package com.writerHub.practice.models;
 
 import com.sun.istack.NotNull;
-import org.hibernate.annotations.NotFound;
 
 import javax.persistence.*;
 
+import java.util.Date;
 import java.util.List;
 
 import static javax.persistence.GenerationType.AUTO;
 
-enum AuthorType{
-    INDIVIDUAL,
-    ORGANIZATION
-}
-
 @Entity
 public class Author {
-    @Id
-    @GeneratedValue(strategy = AUTO)
+    @Id @GeneratedValue(strategy = AUTO)
     private Long id;
     @NotNull
-    private String name;
+    private String firstName;
+
     @NotNull
-    private String email;
+    private String lastName;
+
+    @NotNull
+    private Date dob;
+
     @NotNull
     private String phone;
-    private AuthorType type;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<Author> employees;
+
+    @OneToOne(fetch = FetchType.LAZY) @NotNull
+    private WriterHubUser user;
 
     public Author(){}
 
@@ -39,22 +38,6 @@ public class Author {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPhone() {
         return phone;
     }
@@ -63,19 +46,37 @@ public class Author {
         this.phone = phone;
     }
 
-    public AuthorType getType() {
-        return type;
+
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setType(AuthorType type) {
-        this.type = type;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public List<Author> getEmployees() {
-        return employees;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setEmployees(List<Author> employees) {
-        this.employees = employees;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+
+    public WriterHubUser getUser() {
+        return user;
+    }
+
+    public void setUser(WriterHubUser user) {
+        this.user = user;
+    }
+
 }

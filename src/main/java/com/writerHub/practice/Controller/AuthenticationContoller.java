@@ -1,28 +1,36 @@
 package com.writerHub.practice.Controller;
 
-
 import com.writerHub.practice.models.Author;
-import com.writerHub.practice.service.AuthorService;
+import com.writerHub.practice.models.WriterHubUser;
+import com.writerHub.practice.service.WriterHubUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.writerHub.practice.Exception.AuthenticationExceptions.*;
+
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/auth")
 public class AuthenticationContoller {
 
     @Autowired
-    private AuthorService authorService;
+    private WriterHubUserService writerHubUserService;
 
-    @GetMapping("/authors")
-    public ResponseEntity<List<Author>> getAllAuthors(){
-        return ResponseEntity.ok().body(authorService.getAllAuthors());
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @GetMapping("/login")
+    public ResponseEntity<List<Author>> login(){
+        //return ResponseEntity.ok().body(writerHubUserService());
+        return  null;
     }
 
-    @PostMapping("/authors")
-    public ResponseEntity<Author> saveAuthor(@RequestBody Author author){
-        return ResponseEntity.ok().body(authorService.addAuthor(author));
+    @PostMapping("/signup")
+    public ResponseEntity<?> signUp(@RequestBody WriterHubUser writerHubUser) throws AuthorExists {
+        writerHubUser.setPassword(passwordEncoder.encode(writerHubUser.getPassword()));
+        return writerHubUserService.addUser(writerHubUser);
     }
 }
