@@ -1,5 +1,7 @@
 package com.writerHub.practice.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
@@ -13,11 +15,19 @@ public class WriterHubUser{
 
     @Id @GeneratedValue(strategy = AUTO)
     private Long userId;
-    @NotNull @Column(name = "username",unique = true)
+    @Column(name = "username",unique = true,nullable = false)
     private String username;
-    @NotNull
     private String password;
     private boolean isCompany;
+    private String role = "USER";
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public WriterHubUser(){}
 
@@ -29,10 +39,12 @@ public class WriterHubUser{
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }
