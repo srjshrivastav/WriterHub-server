@@ -3,22 +3,25 @@ package com.writerHub.practice.models;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Company {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
+    @Column(nullable = false)
     private  String name;
+
+    @Column(nullable = false)
+    private  String companyEmail;
 
     @NotNull
     private String address;
-
-    @OneToOne(fetch = FetchType.LAZY,optional = false)
-    private WriterHubUser user;
-
-    public Company(){}
+    @ManyToMany
+    private Set<Author> authors;
 
     public Long getId() {
         return id;
@@ -43,12 +46,20 @@ public class Company {
     public void setAddress(String address) {
         this.address = address;
     }
-
-    public WriterHubUser getUser() {
-        return user;
+    public String getCompanyEmail() {
+        return companyEmail;
     }
 
-    public void setUser(WriterHubUser user) {
-        this.user = user;
+    public void setCompanyEmail(String companyEmail) {
+        this.companyEmail = companyEmail;
     }
+
+    public Set<Author> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(Set<Author> authors) {
+        this.authors = authors;
+    }
+
 }

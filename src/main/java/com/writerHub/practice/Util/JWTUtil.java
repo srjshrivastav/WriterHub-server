@@ -1,40 +1,50 @@
 package com.writerHub.practice.Util;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.writerHub.practice.models.WriterHubUser;
+
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.writerHub.practice.Exception.AuthenticationExceptions.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 public class JWTUtil {
+    private  static Map<String,Date> expiryTime = new HashMap<String,Date>();
 
-    public  static String getToken(String username, String url,String role){
-        Algorithm algorithm  = Algorithm.HMAC512("TestToken".getBytes(StandardCharsets.UTF_8));
-        String token;
-        if(role == null){
-            token = JWT.create()
-                    .withSubject(username)
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 600*60*1000 ))
-                    .withIssuer(url)
-                    .sign(algorithm);
-        }
-        else {
-            token = JWT.create()
-                    .withSubject(username)
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
-                    .withIssuer(url)
-                    .withClaim("roles",role)
-                    .sign(algorithm);
-        }
-        return  token;
+    public JWTUtil(){
+        expiryTime.put("REFRESH",new Date(System.currentTimeMillis()+ 600*60*1000));
+        expiryTime.put("ACCESS",new Date(System.currentTimeMillis()+ 60*60*1000));
     }
 
-    public static DecodedJWT decodeToken(String token) throws Exception {
+    public  static String getToken(WriterHubUser appUser,String url,boolean isRefresh){
+        Algorithm algorithm  = Algorithm.HMAC512("TestToken".getBytes(StandardCharsets.UTF_8));
+        JWTCreator.Builder token = JWT.create()
+                .withExpiresAt(expiryTime.get(isRefresh?"REFRESH":"ACCESS"))
+                .withSubject(appUser.getUsername())
+                .withIssuer(url);
+        if(!isRefresh){
+            token.withClaim("role",appUser.getRole());
+        }
+        if(appUser.isCompany() && appUser.getCompany() != null){
+            token.withAudience(appUser.getCompany().getId().toString());
+        }
+        else if(!appUser.isCompany() && appUser.getAuthor() != null) {
+            token.withAudience(appUser.getAuthor().getId().toString());
+        }
+
+        return  token.sign(algorithm);
+    }
+
+    public static DecodedJWT decodeToken(String token) throws JWTVerificationException {
         if (token != null) {
             Algorithm algo = Algorithm.HMAC512("TestToken".getBytes(StandardCharsets.UTF_8));
             JWTVerifier verifier = JWT.require(algo).build();

@@ -2,10 +2,8 @@ package com.writerHub.practice.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sun.istack.NotNull;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 import static javax.persistence.GenerationType.AUTO;
 
@@ -14,12 +12,22 @@ import static javax.persistence.GenerationType.AUTO;
 public class WriterHubUser{
 
     @Id @GeneratedValue(strategy = AUTO)
-    private Long userId;
+    private Long id;
     @Column(name = "username",unique = true,nullable = false)
     private String username;
     private String password;
     private boolean isCompany;
     private String role = "USER";
+
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinColumn(name = "author_id",referencedColumnName = "id")
+    private Author author;
+
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinColumn(name = "company_id",referencedColumnName = "id")
+    private Company company;
+
+    public WriterHubUser(){}
 
     public String getRole() {
         return role;
@@ -28,8 +36,6 @@ public class WriterHubUser{
     public void setRole(String role) {
         this.role = role;
     }
-
-    public WriterHubUser(){}
 
     public String getUsername() {
         return username;
@@ -49,6 +55,22 @@ public class WriterHubUser{
         this.password = password;
     }
 
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
     public boolean isCompany() {
         return isCompany;
     }
@@ -57,12 +79,12 @@ public class WriterHubUser{
         isCompany = company;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

@@ -4,6 +4,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.writerHub.practice.Util.JWTUtil;
+import com.writerHub.practice.models.WriterHubUser;
+import com.writerHub.practice.service.WriterHubUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,15 +32,19 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager) {
+    private final WriterHubUserService writerHubUserService;
+
+    public AuthenticationFilter(AuthenticationManager authenticationManager,WriterHubUserService userService) {
         this.authenticationManager = authenticationManager;
+        this.writerHubUserService = userService;
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User)authentication.getPrincipal();
-        String access_token = JWTUtil.getToken(user.getUsername(),request.getServletPath().toString(),String.valueOf(user.getAuthorities().toArray()[0]));
-        String refresh_token = JWTUtil.getToken(user.getUsername(),request.getServletPath().toString(),null);
+        WriterHubUser appUser = writerHubUserService.getUser(user.getUsername());
+        String access_token = JWTUtil.getToken(appUser,request.getServletPath().toString(),false);
+        String refresh_token = JWTUtil.getToken(appUser,request.getServletPath().toString(),true);
         Map<String,String> responseBody = new HashMap<>();
         responseBody.put("access_token",access_token);
         responseBody.put("refresh_token",refresh_token);

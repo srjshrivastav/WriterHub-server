@@ -41,17 +41,9 @@ public class WriterHubUserService implements UserDetailsService {
 
     }
 
-    public ResponseEntity<?> addUser(WriterHubUser user){
-        try{
-            WriterHubUser savedUser = (WriterHubUser) userRepository.save(user);
-            return ResponseEntity.ok().body(savedUser);
-        }
-        catch (Exception ex){
-            AuthenticationError error = new AuthenticationError();
-            error.setMessage(user.getUsername()+ " is Already Exists!");
-            error.setStatusCode(HttpStatus.BAD_REQUEST);
-            return ResponseEntity.badRequest().body(error);
-        }
+    public WriterHubUser saveUser(WriterHubUser user){
+            WriterHubUser savedUser = userRepository.save(user);
+            return savedUser;
     }
 
     public WriterHubUser getUser(String username){

@@ -18,28 +18,30 @@ public class Article {
     private Date addedDate = new Date();
     private Date modifiedDate = new Date();
 
-    @OneToOne(fetch = FetchType.EAGER,optional = false)
+    @OneToOne(optional = false)
+    @JoinColumn(name = "author_id",referencedColumnName = "id")
     private Author author;
-    @OneToOne(fetch = FetchType.EAGER)
+
+    @OneToOne(optional = true)
+    @JoinColumn(name = "company_id",referencedColumnName = "id")
     private Company company;
+
 
     public Article() {
     }
-
-    public Author getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(Author author) {
-        this.author = author;
-    }
-
     public Company getCompany() {
         return company;
     }
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
     }
     public Long getId() {
         return id;

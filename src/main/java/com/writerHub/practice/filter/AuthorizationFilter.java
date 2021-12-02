@@ -40,6 +40,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                     authorities.add(new SimpleGrantedAuthority(role));
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username,null,authorities);
                     SecurityContextHolder.getContext().setAuthentication(auth);
+                    request.setAttribute("username",username);
                     filterChain.doFilter(request,response);
                 }
             }catch (Exception exception){

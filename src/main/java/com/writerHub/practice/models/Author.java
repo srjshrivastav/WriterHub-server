@@ -1,11 +1,9 @@
 package com.writerHub.practice.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.istack.NotNull;
-
 import javax.persistence.*;
 
 import java.util.Date;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.AUTO;
 
@@ -13,25 +11,26 @@ import static javax.persistence.GenerationType.AUTO;
 public class Author {
     @Id @GeneratedValue(strategy = AUTO)
     private Long id;
-    @NotNull
+    @Column(nullable = false)
     private String firstName;
 
-    @NotNull
+    @Column(nullable = false)
     private String lastName;
 
-    @NotNull
+    @Column(nullable = false)
     private Date dob;
 
-    @NotNull
+    @Column(nullable = false)
     private String phone;
 
-    @OneToOne(fetch = FetchType.LAZY,optional = false)
-    @JoinColumn(name = "userId",insertable = false,updatable = false)
-    @JsonIgnore
-    private WriterHubUser user;
+    @ManyToMany
+    private Set<Company> company;
 
     public Author(){}
 
+    public Author(Long id){
+        this.id = id;
+    }
     public Long getId() {
         return id;
     }
@@ -73,12 +72,12 @@ public class Author {
         this.dob = dob;
     }
 
-    public WriterHubUser getUser() {
-        return user;
+    public Set<Company> getCompany() {
+        return company;
     }
 
-    public void setUser(WriterHubUser user) {
-        this.user = user;
+    public void setCompany(Set<Company> company) {
+        this.company = company;
     }
 
 }

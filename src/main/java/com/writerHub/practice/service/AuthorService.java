@@ -1,6 +1,8 @@
 package com.writerHub.practice.service;
 
 import com.writerHub.practice.models.Author;
+import com.writerHub.practice.models.Company;
+import com.writerHub.practice.models.WriterHubUser;
 import com.writerHub.practice.repo.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

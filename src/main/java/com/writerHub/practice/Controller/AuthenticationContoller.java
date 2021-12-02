@@ -36,7 +36,8 @@ public class AuthenticationContoller {
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody WriterHubUser writerHubUser) throws AuthorExists {
         writerHubUser.setPassword(passwordEncoder.encode(writerHubUser.getPassword()));
-        return writerHubUserService.addUser(writerHubUser);
+        WriterHubUser user = writerHubUserService.saveUser(writerHubUser);
+        return new ResponseEntity<>(user,HttpStatus.CREATED);
     }
 
     @GetMapping("/token/refresh")
@@ -46,7 +47,7 @@ public class AuthenticationContoller {
             DecodedJWT decoded = JWTUtil.decodeToken(refresh_token);
             String username = decoded.getSubject();
             WriterHubUser user = writerHubUserService.getUser(username);
-            String access_token = JWTUtil.getToken(user.getUsername(),request.getServletPath().toString(),user.getRole());
+            String access_token = JWTUtil.getToken(user,request.getServletPath().toString(),false);
             Map<String,String> responseBody = new HashMap<>();
             responseBody.put("access_token",access_token);
             responseBody.put("refresh_token",refresh_token);
