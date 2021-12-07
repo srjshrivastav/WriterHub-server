@@ -18,11 +18,11 @@ public class Article {
     private Date addedDate = new Date();
     private Date modifiedDate = new Date();
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "author_id",referencedColumnName = "id")
     private Author author;
 
-    @OneToOne(optional = true)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "company_id",referencedColumnName = "id")
     private Company company;
 

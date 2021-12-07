@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+@CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class CompanyController {

@@ -2,6 +2,7 @@ package com.writerHub.practice.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import net.bytebuddy.implementation.bind.annotation.Empty;
 
 import javax.persistence.*;
 
@@ -13,6 +14,8 @@ public class WriterHubUser{
 
     @Id @GeneratedValue(strategy = AUTO)
     private Long id;
+    @Column(nullable = false)
+    private String fullName;
     @Column(name = "username",unique = true,nullable = false)
     private String username;
     private String password;
@@ -29,6 +32,13 @@ public class WriterHubUser{
 
     public WriterHubUser(){}
 
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
     public String getRole() {
         return role;
     }

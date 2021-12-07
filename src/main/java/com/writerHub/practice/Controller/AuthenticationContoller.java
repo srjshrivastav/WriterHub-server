@@ -3,25 +3,36 @@ package com.writerHub.practice.Controller;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.writerHub.practice.Util.JWTUtil;
+import com.writerHub.practice.filter.AuthenticationFilter;
 import com.writerHub.practice.models.AuthenticationError;
+import com.writerHub.practice.models.AuthenticationSuccess;
 import com.writerHub.practice.models.Author;
 import com.writerHub.practice.models.WriterHubUser;
 import com.writerHub.practice.service.WriterHubUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.writerHub.practice.Exception.AuthenticationExceptions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -33,11 +44,31 @@ public class AuthenticationContoller {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody WriterHubUser writerHubUser) throws AuthorExists {
-        writerHubUser.setPassword(passwordEncoder.encode(writerHubUser.getPassword()));
-        WriterHubUser user = writerHubUserService.saveUser(writerHubUser);
-        return new ResponseEntity<>(user,HttpStatus.CREATED);
+        ResponseEntity<?> response;
+        try{
+            writerHubUser.setPassword(passwordEncoder.encode(writerHubUser.getPassword()));
+            WriterHubUser user = writerHubUserService.saveUser(writerHubUser);
+            response = new ResponseEntity<>(user,HttpStatus.CREATED);
+        }
+        catch (DataIntegrityViolationException ex){
+            AuthenticationError error = new AuthenticationError();
+            error.setMessage(writerHubUser.getUsername()+" is already exist!!");
+            error.setStatusCode(HttpStatus.BAD_REQUEST);
+            response = new ResponseEntity<>(error,error.getStatusCode());
+        }
+        catch (Exception ex){
+            System.out.println(ex.getClass());
+            AuthenticationError error = new AuthenticationError();
+            error.setMessage(ex.getMessage());
+            error.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>(error,error.getStatusCode());
+        }
+      return  response;
     }
 
     @GetMapping("/token/refresh")
@@ -62,4 +93,5 @@ public class AuthenticationContoller {
             new ObjectMapper().writeValue(response.getOutputStream(),error);
         }
     }
+
 }

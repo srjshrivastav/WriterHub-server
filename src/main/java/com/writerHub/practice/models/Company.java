@@ -20,7 +20,8 @@ public class Company {
 
     @NotNull
     private String address;
-    @ManyToMany
+
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Set<Author> authors;
 
     public Long getId() {

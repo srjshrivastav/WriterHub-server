@@ -1,9 +1,5 @@
 package com.writerHub.practice.Controller;
 
-
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.writerHub.practice.Util.JWTUtil;
 import com.writerHub.practice.models.*;
 import com.writerHub.practice.service.ArticleService;
 import com.writerHub.practice.service.AuthorService;
@@ -14,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -73,7 +68,7 @@ public class ArticleController {
         }
     }
 
-    @GetMapping("author/{authorId}/article/{id}")
+    @GetMapping("article/{id}")
     public ResponseEntity<?> getArticle(@PathVariable Long id){
         Article article = articleService.getArticle(id);
         return ResponseEntity.ok().body(article);

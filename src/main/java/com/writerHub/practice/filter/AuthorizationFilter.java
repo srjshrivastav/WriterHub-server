@@ -35,7 +35,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                 DecodedJWT decoded = JWTUtil.decodeToken(access_token);
                 if(decoded != null){
                     String username = decoded.getSubject();
-                    String role = decoded.getClaim("roles").toString();
+                    String role = decoded.getClaim("role").asString();
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
                     authorities.add(new SimpleGrantedAuthority(role));
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username,null,authorities);

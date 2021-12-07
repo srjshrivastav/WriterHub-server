@@ -23,7 +23,7 @@ public class Author {
     @Column(nullable = false)
     private String phone;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Set<Company> company;
 
     public Author(){}
